@@ -10,6 +10,7 @@ const { getAccs } = require('./utils/getAccs.js');
   if (SORT_TYPE !== 2 && !fs.existsSync('./sorted_accs.json')) sortAccs();
   const pkeys = readWallets(pathWallets);
   if (!pkeys) return;
+  const date = new Date().getDate();
   while (true) {
     const accs = await getAccs(pkeys.length);
     console.log('Accounts = ', accs);
@@ -18,6 +19,7 @@ const { getAccs } = require('./utils/getAccs.js');
       await require(pathModule)(pkeys[accs[i]]);
       await cliCountDown(Math.floor(Math.random() * (DELAY[1] - DELAY[0]) + DELAY[0]));
     }
+    if (date++ === new Date().getDate()) continue;
     await cliCountDown(secondsLeftUntilNextDay() + Math.floor(Math.random() * 900));
   }
 })();
