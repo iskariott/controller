@@ -19,37 +19,21 @@ function sort4Weeks() {
 }
 
 function sort4Month() {
+  const date = new Date().getDate();
   let data = {};
   let accs = shuffle(Array.from(Array(ACCOUNTS_AMOUNT).keys()));
-  if (ACCOUNTS_AMOUNT <= 30) {
-    const arr = [];
-    while (arr.length < ACCOUNTS_AMOUNT) {
-      const r = Math.floor(Math.random() * 30) + 1;
-      if (arr.indexOf(r) === -1) {
-        arr.push(r);
-        data[['D' + r]] = [accs[arr.length ? arr.length - 1 : arr.length]];
-      }
+  const len = 31 - date > ACCOUNTS_AMOUNT ? ACCOUNTS_AMOUNT : 31 - date;
+  let groups = Array.from({ length: len }, () => []);
+  for (let i = 0; i < accs.length; i++) {
+    let groupNumber = (i + 1) % len;
+    if (groupNumber === 0) {
+      groupNumber = len - 1;
+    } else {
+      groupNumber--;
     }
-    data = Object.keys(data)
-      .sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)))
-      .reduce((obj, key) => {
-        obj[key] = data[key];
-        return obj;
-      }, {});
-  } else if (ACCOUNTS_AMOUNT > 30) {
-    let groups = Array.from({ length: 30 }, () => []);
-    let accs = shuffle(Array.from(Array(ACCOUNTS_AMOUNT).keys()));
-    for (let i = 0; i < accs.length; i++) {
-      let groupNumber = (i + 1) % 30;
-      if (groupNumber === 0) {
-        groupNumber = 30 - 1;
-      } else {
-        groupNumber--;
-      }
-      groups[groupNumber].push(accs[i]);
-    }
-    groups.forEach((itm, idx) => (data['D' + (idx + 1)] = itm));
+    groups[groupNumber].push(accs[i]);
   }
+  groups.forEach((itm, idx) => (data['D' + (idx + date)] = itm));
   fs.writeFileSync('sorted_accs.json', JSON.stringify(data), 'utf8');
 }
 
