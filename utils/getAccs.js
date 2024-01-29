@@ -1,11 +1,13 @@
 const moment = require('./moment.min.js');
 const fs = require('fs');
-const { secondsLeftUntilNextDay } = require('./utils.js');
-const { SORT_TYPE, NRAND } = require('../config.js');
+const { secondsLeftUntilNextDay, shuffle } = require('./utils.js');
+const { SORT_TYPE, NRAND, ACC_PACK } = require('../config.js');
 
 async function getAccs(walletsAmount) {
   if (SORT_TYPE === 2) {
     return Array.from({ length: NRAND }, () => Math.floor(Math.random() * walletsAmount));
+  } else if (SORT_TYPE === 3) {
+    return shuffle(ACC_PACK);
   }
   const date = new Date();
   const accs = JSON.parse(fs.readFileSync('./sorted_accs.json'));
